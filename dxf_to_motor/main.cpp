@@ -17,7 +17,7 @@ void testReading(char* file)
 
 int main()
 {
-	char filename[50] = "C:\\Users\\10376\\Desktop\\test.dxf";
+	char filename[50] = "test.dxf";
 	testReading(filename);
 	dxf_to_txt::Print_Range();
 	Shape::Print_All();
