@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "dl_entities.h"
 #include <vector>
 
@@ -9,11 +9,12 @@ class Shape
 public:
 	Shape(const Type type_input);
 	virtual void Print() const = 0;
+
+	// 通过串口输出给Arduino,该功能尚未完成,用输出到txt代替
 	virtual void Output() const = 0;
+
 	static void Print_All();
 	static void Output_All();
-protected:
-	static bool between(double x, double y, double x1, double y1, double x2, double y2);
 private:
 	Type type;
 	static std::vector<Shape*> Shape_List;
@@ -57,10 +58,10 @@ public:
 	virtual void Print() const;
 	virtual void Output() const;
 private:
-	double x1;
-	double y1;
-	double x2;
-	double y2;
+	double x1; // 起点x坐标
+	double y1; // 起点y坐标
+	double x2; // 终点x坐标
+	double y2; // 终点x坐标
 };
 
 class Arc : virtual public Shape
@@ -70,10 +71,11 @@ public:
 	virtual void Print() const;
 	virtual void Output() const;
 private:
-	double cx;
-	double cy;
-	double radius;
-	// ʹ�ýǶ���
-	double angle1;
-	double angle2;
+	double cx; // 圆心x坐标
+	double cy; // 圆心y坐标
+	double radius; // 半径
+	double angle1; // 使用角度degree
+	double angle2; // 使用角度degree
 };
+
+extern std::ofstream file_out; // 输出txt文件

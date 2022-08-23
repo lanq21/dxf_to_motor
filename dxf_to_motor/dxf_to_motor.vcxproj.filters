@@ -45,7 +45,7 @@
     <ClInclude Include="dl_writer.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="dxf_to_txt.h">
+    <ClInclude Include="Bridge.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="Shape.h">
@@ -65,7 +65,7 @@
     <ClCompile Include="main.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="dxf_to_txt.cpp">
+    <ClCompile Include="Bridge.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="Shape.cpp">

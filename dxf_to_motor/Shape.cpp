@@ -1,12 +1,14 @@
 #include "COM.h"
-#include "dxf_to_txt.h"
+#include "Bridge.h"
 #include "Shape.h"
 #include <iostream>
+#include <math.h>
 
 const double PI = 3.14159265359;
-const int UP = 10;
-const int DOWN = 0;
+const int UP = 10; // 抬起时z轴高度
+const int DOWN = 0; // 落下时z轴高度
 
+std::ofstream file_out;
 std::vector<Shape*> Shape::Shape_List;
 
 Shape::Shape(const Type type_input) :type(type_input)
@@ -26,24 +28,25 @@ void Shape::Output_All()
 		(*iter)->Output();
 }
 
-bool Shape::between(double x, double y, double x1, double y1, double x2, double y2)
-{
-	return (x > x1 && x < x2&& y > y1 && y < y2) || (x > x1 && x < x2&& y < y1&& y > y2) || (x < x1&& x > x2 && y > y1 && y < y2) || (x < x1&& x > x2 && y < y1&& y > y2);
-}
-
 Point::Point(const DL_PointData& obj) :Shape(point), shape(obj) {}
 
 void Point::Print() const
 {
-	std::cout << "点:(" << shape.x << ',' << shape.y << ')\n';
+	std::cout << "点:(" << shape.x << ',' << shape.y << ")\n";
 }
 
 void Point::Output() const
 {
+	// 移动到点
+	com.Write(shape.x);
+	com.Write(shape.y);
+	com.Write(UP);
+
 	com.Write(shape.x);
 	com.Write(shape.y);
 	com.Write(DOWN);
 
+	// 抬起
 	com.Write(shape.x);
 	com.Write(shape.y);
 	com.Write(UP);
@@ -58,34 +61,26 @@ void Circle::Print() const
 
 void Circle::Output() const
 {
-	const int num = 20;
-
-	//float** result = new float* [num];
-	//for (int i = 0; i < num; i++) {
-	//	result[i] = new float[2];
-	//}
-	//for (int i = 0; i < num / 2; i++) //将x分成一半
-	//{
-	//	result[i][0] = shape.cx - shape.radius + 2 * shape.radius * (1.0 / ((num / 2.0) - 1)) * i;
-	//	result[i + num / 2][0] = shape.cx - shape.radius + 2 * shape.radius * (1.0 / ((num / 2.0) - 1)) * i;
-	//	result[i][1] = sqrt(shape.radius * shape.radius - (result[i][0] - shape.cx) * (result[i][0] - shape.cx)) + shape.cy;
-	//	result[i + num / 2][1] = -sqrt(shape.radius * shape.radius - (result[i + num / 2][0] - shape.cx) * (result[i + num / 2][0] - shape.cx)) + shape.cy;
-	//}
+	const int num = 20; // 分隔点个数
 
 	double Angle_Path = (2 * PI) / num; // 角度步长
+
+	// 移动到起点
 	com.Write(shape.cx + shape.radius);
 	com.Write(shape.cy);
 	com.Write(UP);
-	for (int i = 0; i < num; i++)
+
+	double x, y;
+	for (int i = 0; i <= num; i++)
 	{
-		com.Write(shape.cx + shape.radius * cos(i * Angle_Path));
-		com.Write(shape.cy + shape.radius * sin(i * Angle_Path));
+		x = shape.cx + shape.radius * cos(i * Angle_Path);
+		y = shape.cy + shape.radius * sin(i * Angle_Path);
+		com.Write(x);
+		com.Write(y);
 		com.Write(DOWN);
 	}
-	com.Write(shape.cx + shape.radius);
-	com.Write(shape.cy);
-	com.Write(DOWN);
 
+	// 抬起
 	com.Write(shape.cx + shape.radius);
 	com.Write(shape.cy);
 	com.Write(UP);
@@ -100,7 +95,34 @@ void Ellipse::Print() const
 
 void Ellipse::Output() const
 {
+	const int num = 20; // 分隔点个数
 
+	double Theta0 = atan2(shape.my, shape.mx); // 椭圆旋转角
+	double Cos0 = cos(Theta0);
+	double Sin0 = sin(Theta0);
+	double a = sqrt(shape.mx * shape.mx + shape.my * shape.my); // 椭圆半长轴
+	double b = shape.ratio * a; // 椭圆半短轴
+	double Angle_Path = (shape.angle2 - shape.angle1) / num; // 角度步长
+
+	// 移动到起点
+	com.Write(a * cos(shape.angle1) * Cos0 + b * sin(shape.angle1) * Sin0);
+	com.Write(b * sin(shape.angle1) * Cos0 - a * cos(shape.angle1) * Sin0);
+	com.Write(UP);
+
+	double x, y;
+	for (int i = 0; i <= num; i++)
+	{
+		x = a * cos(shape.angle1 + i * Angle_Path) * Cos0 + b * sin(shape.angle1 + i * Angle_Path) * Sin0;
+		y = b * sin(shape.angle1 + i * Angle_Path) * Cos0 - a * cos(shape.angle1 + i * Angle_Path) * Sin0;
+		com.Write(x);
+		com.Write(y);
+		com.Write(DOWN);
+	}
+
+	// 抬起
+	com.Write(a * cos(shape.angle2) * Cos0 + b * sin(shape.angle2) * Sin0);
+	com.Write(b * sin(shape.angle2) * Cos0 - a * cos(shape.angle2) * Sin0);
+	com.Write(UP);
 }
 
 Line::Line(const double& x1, const double& y1, const double& x2, const double& y2) :Shape(line), x1(x1), y1(y1), x2(x2), y2(y2) {}
@@ -112,6 +134,7 @@ void Line::Print() const
 
 void Line::Output() const
 {
+	// 移动到起点
 	com.Write(x1);
 	com.Write(y1);
 	com.Write(UP);
@@ -124,6 +147,7 @@ void Line::Output() const
 	com.Write(y2);
 	com.Write(DOWN);
 
+	// 抬起
 	com.Write(x2);
 	com.Write(y2);
 	com.Write(UP);
@@ -138,44 +162,26 @@ void Arc::Print() const
 
 void Arc::Output() const
 {
-	const int num = 20;
+	const int num = 20; // 分隔点数
 
-	//float** result = new float* [num];
-	//for (int i = 0; i < num; i++) {
-	//	result[i] = new float[2];
-	//}
-	//for (int i = 0; i < num / 2; i++) //将x分成一半
-	//{
-	//	result[i][0] = cx - radius + 2 * radius * (1.0 / ((num / 2.0) - 1)) * i;
-	//	result[i + num / 2][0] = cx - radius + 2 * radius * (1.0 / ((num / 2.0) - 1)) * i;
-	//	result[i][1] = sqrt(radius * radius - (result[i][0] - cx) * (result[i][0] - cx)) + cy;
-	//	result[i + num / 2][1] = -sqrt(radius * radius - (result[i + num / 2][0] - cx) * (result[i + num / 2][0] - cx)) + cy;
-	//}
-	//double x1 = cx + radius * cos(angle1);
-	//double x2 = cx + radius * cos(angle2);
-	//double y1 = cy + radius * sin(angle1);
-	//double y2 = cy + radius * sin(angle2);
-	//for (int i = 0; i < num; i++) {
-	//	if (between(result[i][0], result[i][1], x1, y1, x2, y2) == 0) {
-	//		result[i][0] = -1;
-	//		result[i][1] = -1;
-	//	}
-	//}
+	double Angle_Path = (angle2 - angle1) / num; // 角度步长
 
+	// 移动到起点
 	com.Write(cx + radius * cos(angle1) / 180.0 * PI);
 	com.Write(cy + radius * sin(angle1) / 180.0 * PI);
 	com.Write(UP);
-	double Angle_Path = (angle2 - angle1) / num; // 角度步长
-	for (int i = 0; i < num; i++)
+
+	double x, y;
+	for (int i = 0; i <= num; i++)
 	{
-		com.Write(cx + radius * cos((angle1 + i * Angle_Path)) / 180.0 * PI);
-		com.Write(cy + radius * sin((angle1 + i * Angle_Path)) / 180.0 * PI);
+		x = cx + radius * cos((angle1 + i * Angle_Path)) / 180.0 * PI;
+		y = cy + radius * sin((angle1 + i * Angle_Path)) / 180.0 * PI;
+		com.Write(x);
+		com.Write(y);
 		com.Write(DOWN);
 	}
-	com.Write((cx + radius * cos(angle2)) / 180.0 * PI);
-	com.Write((cy + radius * sin(angle2)) / 180.0 * PI);
-	com.Write(DOWN);
 
+	// 抬起
 	com.Write((cx + radius * cos(angle2)) / 180.0 * PI);
 	com.Write((cy + radius * sin(angle2)) / 180.0 * PI);
 	com.Write(UP);

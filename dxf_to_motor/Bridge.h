@@ -1,7 +1,7 @@
 #pragma once
 #include "dl_creationadapter.h"
 #include <fstream>
-class dxf_to_txt : public DL_CreationAdapter
+class Bridge : public DL_CreationAdapter
 {
 public:
 	static void Print_Range();
@@ -17,5 +17,3 @@ private:
 	static double max_y;
 	static double min_y;
 };
-
-extern std::ofstream file_out;

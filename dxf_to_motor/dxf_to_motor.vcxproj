@@ -30,7 +30,7 @@
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
-    <CharacterSet>MultiByte</CharacterSet>
+    <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
@@ -139,14 +139,14 @@
     <ClInclude Include="dl_global.h" />
     <ClInclude Include="dl_writer.h" />
     <ClInclude Include="dl_writer_ascii.h" />
-    <ClInclude Include="dxf_to_txt.h" />
+    <ClInclude Include="Bridge.h" />
     <ClInclude Include="Shape.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="COM.cpp" />
     <ClCompile Include="dl_dxf.cpp" />
     <ClCompile Include="dl_writer_ascii.cpp" />
-    <ClCompile Include="dxf_to_txt.cpp" />
+    <ClCompile Include="Bridge.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Shape.cpp" />
   </ItemGroup>

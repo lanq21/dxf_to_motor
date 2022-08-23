@@ -1,34 +1,26 @@
-#include "dxf_to_txt.h"
+#include "Bridge.h"
 #include "Shape.h"
 #include <iostream>
 #include <algorithm>
 #include <fstream>
 
-std::ofstream file_out;
+double Bridge::max_x=DBL_MIN;
+double Bridge::min_x=DBL_MAX;
+double Bridge::max_y=DBL_MIN;
+double Bridge::min_y=DBL_MAX;
 
-double dxf_to_txt::min_x = DBL_MAX;
-double dxf_to_txt::min_y = DBL_MAX;
-double dxf_to_txt::max_x = DBL_MIN;
-double dxf_to_txt::max_y = DBL_MIN;
-
-void dxf_to_txt::Print_Range()
+void Bridge::Print_Range()
 {
 	std::cout << "x范围 (" << min_x << ',' << max_x <<")\ny范围 (" << min_y << ',' << max_y <<")\n\n";
 }
 
-void dxf_to_txt::addPoint(const DL_PointData& data)
+void Bridge::addPoint(const DL_PointData& data)
 {
-	// 确定图形边缘
-	max_x = std::max(max_x, data.x);
-	min_x = std::min(min_x, data.x);
-	max_y = std::max(max_y, data.y);
-	min_y = std::min(min_y, data.y);
-
 	// 存入列表
 	new Point(data);
 }
 
-void dxf_to_txt::addLine(const DL_LineData& data)
+void Bridge::addLine(const DL_LineData& data)
 {
 	max_x = std::max({ max_x, data.x1, data.x2 });
 	min_x = std::min({ min_x, data.x1, data.x2 });
@@ -38,7 +30,7 @@ void dxf_to_txt::addLine(const DL_LineData& data)
 	new Line(data.x1, data.y1, data.x2, data.y2);
 }
 
-void dxf_to_txt::addArc(const DL_ArcData& data)
+void Bridge::addArc(const DL_ArcData& data)
 {
 	// 右侧边缘点
 	double Angle_1 = data.angle1;
@@ -67,7 +59,7 @@ void dxf_to_txt::addArc(const DL_ArcData& data)
 	new Arc(data.cx, data.cy, data.radius, data.angle1, data.angle2);
 }
 
-void dxf_to_txt::addCircle(const DL_CircleData& data)
+void Bridge::addCircle(const DL_CircleData& data)
 {
 	max_x = std::max({ max_x,data.cx + data.radius });
 	min_x = std::min({ min_x,data.cx - data.radius });
@@ -77,7 +69,7 @@ void dxf_to_txt::addCircle(const DL_CircleData& data)
 	new Circle(data);
 }
 
-void dxf_to_txt::addVertex(const DL_VertexData& data) {
+void Bridge::addVertex(const DL_VertexData& data) {
 	static double x;
 	static double y;
 	static double bulge = 0;
@@ -137,7 +129,7 @@ void dxf_to_txt::addVertex(const DL_VertexData& data) {
 
 	x = data.x;
 	y = data.y;
-	bulge = data.bulge;
+	bulge = data.bulge; // 凸度
 
 	// 凸度!=0，则该点与下一点之间连有圆弧
 	// 圆弧半径 radius=L*(W+1.0/W)/4.0，其中L为两点间距离
@@ -146,7 +138,7 @@ void dxf_to_txt::addVertex(const DL_VertexData& data) {
 	//		其中mu=(1-W*W)/2*W
 }
 
-void dxf_to_txt::addEllipse(const DL_EllipseData& data)
+void Bridge::addEllipse(const DL_EllipseData& data)
 {
 	new Ellipse(data);
 

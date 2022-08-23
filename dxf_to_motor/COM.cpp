@@ -5,9 +5,10 @@
 
 
 #include "COM.h"
-#include "dxf_to_txt.h"
+#include "Shape.h"
 #include <iostream>
 #include <string>
+#include <fstream>
 
 COM::COM()
 {
