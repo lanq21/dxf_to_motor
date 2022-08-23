@@ -1,11 +1,9 @@
 #pragma once
 #include "dl_creationadapter.h"
-#include "Shape.h"
-
+#include <fstream>
 class dxf_to_txt : public DL_CreationAdapter
 {
 public:
-	dxf_to_txt();
 	static void Print_Range();
 	virtual void addPoint(const DL_PointData& data);
 	virtual void addLine(const DL_LineData& data);
@@ -18,5 +16,6 @@ private:
 	static double min_x;
 	static double max_y;
 	static double min_y;
-	int polyline_vertex_count;
 };
+
+extern std::ofstream file_out;

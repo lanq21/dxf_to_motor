@@ -1,14 +1,15 @@
 #include "dxf_to_txt.h"
-#include "dl_dxf.h"
+#include "Shape.h"
 #include <iostream>
 #include <algorithm>
+#include <fstream>
+
+std::ofstream file_out;
 
 double dxf_to_txt::min_x = DBL_MAX;
 double dxf_to_txt::min_y = DBL_MAX;
 double dxf_to_txt::max_x = DBL_MIN;
 double dxf_to_txt::max_y = DBL_MIN;
-
-dxf_to_txt::dxf_to_txt() : polyline_vertex_count(0) {}
 
 void dxf_to_txt::Print_Range()
 {
@@ -34,7 +35,7 @@ void dxf_to_txt::addLine(const DL_LineData& data)
 	max_y = std::max({ max_y, data.y1, data.y2 });
 	min_y = std::min({ min_y, data.y1, data.y2 });
 
-	new Line(data);
+	new Line(data.x1, data.y1, data.x2, data.y2);
 }
 
 void dxf_to_txt::addArc(const DL_ArcData& data)
@@ -63,7 +64,7 @@ void dxf_to_txt::addArc(const DL_ArcData& data)
 	if (Angle_1 > Angle_2) min_y = std::min({ min_y,data.cy - data.radius });
 	else min_y = std::min({ min_y,data.cy + data.radius * sin(data.angle1),data.cy + data.radius * sin(data.angle2) });
 
-	new Arc(data);
+	new Arc(data.cx, data.cy, data.radius, data.angle1, data.angle2);
 }
 
 void dxf_to_txt::addCircle(const DL_CircleData& data)
@@ -120,7 +121,7 @@ void dxf_to_txt::addVertex(const DL_VertexData& data) {
 		if (Angle_1 > Angle_2) min_y = std::min({ min_y,cy - radius });
 		else min_y = std::min({ min_y,cy + radius * sin(angle1),cy + radius * sin(angle2) });
 
-		new Arc_Polyline(cx, cy, radius, angle1, angle2);
+		new Arc(cx, cy, radius, angle1, angle2);
 	}
 	else if (first_called)
 		first_called = false;
@@ -131,7 +132,7 @@ void dxf_to_txt::addVertex(const DL_VertexData& data) {
 		max_y = std::max({ max_y, y, data.y });
 		min_y = std::min({ min_y, y, data.y });
 		
-		new Line_Polyline(x, y, data.x, data.y);
+		new Line(x, y, data.x, data.y);
 	}
 
 	x = data.x;

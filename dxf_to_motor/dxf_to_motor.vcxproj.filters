@@ -48,13 +48,13 @@
     <ClInclude Include="dxf_to_txt.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="Drill.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="Shape.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="dl_writer_ascii.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="COM.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -65,16 +65,16 @@
     <ClCompile Include="main.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="dxf_to_motor.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="Drill.cpp">
+    <ClCompile Include="dxf_to_txt.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="Shape.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="dl_writer_ascii.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="COM.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
