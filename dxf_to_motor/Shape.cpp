@@ -7,6 +7,7 @@
 const double PI = 3.14159265359;
 int Shape::UP = 10; // 抬起时z轴高度
 int Shape::DOWN = 0; // 落下时z轴高度
+int Shape::Division = 20; // 弧线上分隔点
 
 std::ofstream file_out;
 std::vector<Shape*> Shape::Shape_List;
@@ -24,6 +25,11 @@ void Shape::Set_Z_Up(const int z)
 void Shape::Set_Z_Down(const int z)
 {
 	DOWN = z;
+}
+
+void Shape::Set_Division(const int num)
+{
+	Division = num;
 }
 
 void Shape::Output_All()
@@ -68,9 +74,7 @@ void Circle::Print() const
 
 void Circle::Output() const
 {
-	const int num = 20; // 分隔点个数
-
-	double Angle_Path = (2 * PI) / num; // 角度步长
+	double Angle_Path = (2 * PI) / Division; // 角度步长
 
 	// 移动到起点
 	com.Write(shape.cx + shape.radius);
@@ -78,7 +82,7 @@ void Circle::Output() const
 	com.Write(UP);
 
 	double x, y;
-	for (int i = 0; i <= num; i++)
+	for (int i = 0; i <= Division; i++)
 	{
 		x = shape.cx + shape.radius * cos(i * Angle_Path);
 		y = shape.cy + shape.radius * sin(i * Angle_Path);
@@ -102,14 +106,12 @@ void Ellipse::Print() const
 
 void Ellipse::Output() const
 {
-	const int num = 20; // 分隔点个数
-
 	double Theta0 = atan2(shape.my, shape.mx); // 椭圆旋转角
 	double Cos0 = cos(Theta0);
 	double Sin0 = sin(Theta0);
 	double a = sqrt(shape.mx * shape.mx + shape.my * shape.my); // 椭圆半长轴
 	double b = shape.ratio * a; // 椭圆半短轴
-	double Angle_Path = (shape.angle2 - shape.angle1) / num; // 角度步长
+	double Angle_Path = (shape.angle2 - shape.angle1) / Division; // 角度步长
 
 	// 移动到起点
 	com.Write(a * cos(shape.angle1) * Cos0 + b * sin(shape.angle1) * Sin0);
@@ -117,7 +119,7 @@ void Ellipse::Output() const
 	com.Write(UP);
 
 	double x, y;
-	for (int i = 0; i <= num; i++)
+	for (int i = 0; i <= Division; i++)
 	{
 		x = a * cos(shape.angle1 + i * Angle_Path) * Cos0 + b * sin(shape.angle1 + i * Angle_Path) * Sin0;
 		y = b * sin(shape.angle1 + i * Angle_Path) * Cos0 - a * cos(shape.angle1 + i * Angle_Path) * Sin0;
@@ -169,9 +171,7 @@ void Arc::Print() const
 
 void Arc::Output() const
 {
-	const int num = 20; // 分隔点数
-
-	double Angle_Path = (angle2 - angle1) / num; // 角度步长
+	double Angle_Path = (angle2 - angle1) / Division; // 角度步长
 
 	// 移动到起点
 	com.Write(cx + radius * cos(angle1) / 180.0 * PI);
@@ -179,7 +179,7 @@ void Arc::Output() const
 	com.Write(UP);
 
 	double x, y;
-	for (int i = 0; i <= num; i++)
+	for (int i = 0; i <= Division; i++)
 	{
 		x = cx + radius * cos((angle1 + i * Angle_Path)) / 180.0 * PI;
 		y = cy + radius * sin((angle1 + i * Angle_Path)) / 180.0 * PI;

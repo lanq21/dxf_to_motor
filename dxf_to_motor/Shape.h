@@ -15,10 +15,12 @@ public:
 
 	static void Set_Z_Up(const int z = 10);
 	static void Set_Z_Down(const int z = 0);
+	static void Set_Division(const int num = 20);
 	static void Output_All();
 protected:
 	static int UP;
 	static int DOWN;
+	static int Division;
 private:
 	Type type;
 	static std::vector<Shape*> Shape_List;

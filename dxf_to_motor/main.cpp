@@ -29,6 +29,9 @@ int main()
 	// 钻头落下的 z 坐标
 	Shape::Set_Z_Down(0);
 
+	// 设置弧线上的分割点个数
+	Shape::Set_Division(20);
+
 	// 坐标信息将被写入到文本文件 "test.txt"
 	file_out.open("test.txt", std::ios_base::trunc);
 	
