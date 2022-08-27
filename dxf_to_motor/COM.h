@@ -7,13 +7,15 @@ class COM
 {
 public:
 
-	COM();
-
-	bool Open(const int num); // 输入端口号打开串口
+	bool Open(); // 输入端口号打开串口
 
 	bool Read(); // 读取串口内容到str
 
 	bool Write(double num);	//将数字输出到串口
+
+	static void Set_Delay_Time(const int time); // 设置发送间隔
+
+	static void Disable_COM(); // 停用串口发送
 
 	~COM();
 
@@ -21,6 +23,8 @@ private:
 
 	HANDLE hCom;
 	char Input[100]; // 读取串口内容
+	static int Delay_Time; // 发送间隔
+	static bool Enable; // 使用串口发送
 
 };
 

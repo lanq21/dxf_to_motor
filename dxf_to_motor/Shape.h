@@ -10,11 +10,15 @@ public:
 	Shape(const Type type_input);
 	virtual void Print() const = 0;
 
-	// 通过串口输出给Arduino,该功能尚未完成,用输出到txt代替
+	// 通过串口输出给Arduino，同时输出到txt，在终端打印
 	virtual void Output() const = 0;
 
-	static void Print_All();
+	static void Set_Z_Up(const int z = 10);
+	static void Set_Z_Down(const int z = 0);
 	static void Output_All();
+protected:
+	static int UP;
+	static int DOWN;
 private:
 	Type type;
 	static std::vector<Shape*> Shape_List;
@@ -26,7 +30,6 @@ public:
 	Point(const DL_PointData& obj);
 	virtual void Print() const;
 	virtual void Output() const;
-
 private:
 	const DL_PointData shape;
 };
@@ -67,7 +70,7 @@ private:
 class Arc : virtual public Shape
 {
 public:
-	Arc(const double& cx, const double& cy, const double& radius, const double& angle1,const double& angle2);
+	Arc(const double& cx, const double& cy, const double& radius, const double& angle1, const double& angle2);
 	virtual void Print() const;
 	virtual void Output() const;
 private:

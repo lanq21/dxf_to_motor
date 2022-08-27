@@ -3,15 +3,31 @@
 #include <iostream>
 #include <algorithm>
 #include <fstream>
+#include "dl_dxf.h"
 
 double Bridge::max_x=DBL_MIN;
 double Bridge::min_x=DBL_MAX;
 double Bridge::max_y=DBL_MIN;
 double Bridge::min_y=DBL_MAX;
 
-void Bridge::Print_Range()
+double Bridge::Get_Max_X()
 {
-	std::cout << "x·¶Î§ (" << min_x << ',' << max_x <<")\ny·¶Î§ (" << min_y << ',' << max_y <<")\n\n";
+	return max_x;
+}
+
+double Bridge::Get_Min_X()
+{
+	return min_x;
+}
+
+double Bridge::Get_Max_Y()
+{
+	return max_y;
+}
+
+double Bridge::Get_Min_Y()
+{
+	return min_y;
 }
 
 void Bridge::addPoint(const DL_PointData& data)
@@ -143,7 +159,7 @@ void Bridge::addEllipse(const DL_EllipseData& data)
 	new Ellipse(data);
 
 	// ÓÃÒÔ³¤ÖáÎª°ë¾¶µÄÔ²½üËÆÍÖÔ²
-	double radius = sqrt((data.mx - data.cx) * (data.mx - data.cx) + (data.my - data.cy) * (data.my - data.cy));
+	double radius = sqrt(data.mx * data.mx + data.my * data.my);
 
 	double Angle_1 = data.angle1;
 	double Angle_2 = data.angle2;
@@ -164,4 +180,17 @@ void Bridge::addEllipse(const DL_EllipseData& data)
 	Angle_2 = (data.angle2 > 270) ? (data.angle2 - 270) : (data.angle2 + 90);
 	if (Angle_1 > Angle_2) min_y = std::min({ min_y,data.cy - radius });
 	else min_y = std::min({ min_y,data.cy + radius * sin(data.angle1),data.cy + radius * sin(data.angle2) });
+}
+
+void Bridge::Reading(const std::string file)
+{
+	Bridge* obj = new Bridge();
+	DL_Dxf* dxf = new DL_Dxf();
+	if (!dxf->in(file.c_str(), obj))
+	{
+		std::cerr << file << " could not be opened.\n";
+		return;
+	}
+	delete dxf;
+	delete obj;
 }

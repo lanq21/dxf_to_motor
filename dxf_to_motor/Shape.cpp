@@ -5,8 +5,8 @@
 #include <math.h>
 
 const double PI = 3.14159265359;
-const int UP = 10; // 抬起时z轴高度
-const int DOWN = 0; // 落下时z轴高度
+int Shape::UP = 10; // 抬起时z轴高度
+int Shape::DOWN = 0; // 落下时z轴高度
 
 std::ofstream file_out;
 std::vector<Shape*> Shape::Shape_List;
@@ -16,16 +16,23 @@ Shape::Shape(const Type type_input) :type(type_input)
 	Shape_List.push_back(this);
 }
 
-void Shape::Print_All()
+void Shape::Set_Z_Up(const int z)
 {
-	for (auto iter = Shape_List.begin(); iter != Shape_List.end(); iter++)
-		(*iter)->Print();
+	UP = z;
+}
+
+void Shape::Set_Z_Down(const int z)
+{
+	DOWN = z;
 }
 
 void Shape::Output_All()
 {
 	for (auto iter = Shape_List.begin(); iter != Shape_List.end(); iter++)
+	{
+		(*iter)->Print();
 		(*iter)->Output();
+	}
 }
 
 Point::Point(const DL_PointData& obj) :Shape(point), shape(obj) {}
